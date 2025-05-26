@@ -1,10 +1,10 @@
 {
   "name": "back-end",
   "version": "1.0.0",
-  "main": "back-end/dist/main.js",
+  "main": "dist/main.js",
 "scripts": {
   "build": "npx tsc",
-  "start": "node back-end/dist/main.js"
+  "start": "node dist/main.js"
 },
   "author": "",
   "license": "ISC",

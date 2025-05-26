@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "dist/main.js",
 "scripts": {
-  "build": "tsc",
-  "start": "node dist/main.js"
-},
+      "prestart": "chmod +x ./node_modules/.bin/tsc",
+       "start": "tsc && node dist/index.js"
+    },
   "author": "",
   "license": "ISC",
   "description": "",

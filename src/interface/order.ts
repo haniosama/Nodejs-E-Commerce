@@ -11,11 +11,13 @@ export interface IOrder {
     title: string;
     price: number;
     quantity: number;
-    productId:{
-      price:number,
+    productId: {
+      price: number;
       adminId?: string;
-      _id:string;
-    }
+      _id: string;
+    };
+    productDetails: any;
+    
   }[];
   adminsId: string[]; // ✅ أضف هذا السطر
   total: number;

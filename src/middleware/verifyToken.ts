@@ -5,6 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: any;
+      token?: string;
     }
   }
 }
@@ -21,7 +22,6 @@ const verifyToken: RequestHandler = (req, res, next) => {
 
   token = Array.isArray(token) ? token[0] : token;
   token = token.split(" ")[1];
- console.log(token);
 
 
   if (!process.env.TOKEN_SECRET) {
@@ -37,8 +37,8 @@ const verifyToken: RequestHandler = (req, res, next) => {
       token,
       process.env.TOKEN_SECRET
     ) as jwt.JwtPayload;
-
     req.user = decoded;
+    req.token = token; 
     next();
   } catch (error) {
     res.status(401).send({

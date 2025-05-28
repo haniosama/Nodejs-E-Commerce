@@ -1,3 +1,4 @@
+import { any } from "joi";
 import { IOrder } from "../interface/order";
 import { IProduct } from "./../interface/product";
 import mongoose from "mongoose";
@@ -32,6 +33,9 @@ const schema = new mongoose.Schema({
   },
   updatedAt: {
     type: Date,
+  },
+  onlinePaymentDetails: {
+    type: {},
   },
 });
 

@@ -27,8 +27,7 @@ app.post(
   "/confirmOnlinePayment",
   express.raw({ type: "application/json" }),
   async (req: any, res: any) => {
-    const endpointSecret =
-      "whsec_aedc546b261c1197b3672da0355bd77db02c63c7afa4ca04034bb52a92444e9d";
+    const endpointSecret = process.env.END_POINT_SECRET;
     const sig = req.headers["stripe-signature"];
 
     let event;

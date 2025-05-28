@@ -69,23 +69,23 @@ app.post(
         status,
       };
 
-      // const order_details = JSON.parse(session.metadata.shipping_details);
-      // const cart = await CartModel.findOne({ userId: client_reference_id });
-      // const products = cart?.products.map((pro) => pro);
+      const order_details = JSON.parse(session.metadata.shipping_details);
+      const cart = await CartModel.findOne({ userId: client_reference_id });
+      const products = cart?.products.map((pro) => pro);
 
-      // const body: any = {
-      //   order_details,
-      //   products,
-      //   userId: client_reference_id,
-      // };
+      const body: any = {
+        order_details,
+        products,
+        userId: client_reference_id,
+      };
 
-      // const createOrder = new OrderService();
-      // createOrder.handleCreateOrder;
-      // const resSer = await createOrder.handleCreateOrder(
-      //   body,
-      //   session.metadata.token,
-      //   sessionData
-      // );
+      const createOrder = new OrderService();
+      createOrder.handleCreateOrder;
+      const resSer = await createOrder.handleCreateOrder(
+        body,
+        session.metadata.token,
+        sessionData
+      );
     }
 
     res.json({ received: true });

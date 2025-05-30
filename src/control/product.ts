@@ -69,7 +69,7 @@ export default class ProductControl {
         return res.status(500).send(resSer);
       }
 
-      res.status(200).send(resSer);
+      res.status(200).send({...resSer});
     } catch (err) {
       console.error(err);
       res.status(500).send({ status: "error", message: "Image upload failed" });
@@ -107,7 +107,7 @@ export default class ProductControl {
   async deleteProduct(req: Request, res: Response): Promise<void> {
     let id = req.params.id;
 
-    if (req.user.role !== "admin") {
+    if (req.user.role == "user") {
       res.status(403).send({
         status: "Error",
         message: "You are not authorized to access this resource!",
@@ -134,7 +134,7 @@ export default class ProductControl {
       return;
     }
 
-    const deleteRes = await this.productService.handleDeleteProduct(id);
+    const deleteRes = await this.productService.handleDeleteProduct(id,req.user.userID);
 
     if (deleteRes.status == "error") {
       res.status(500).send(deleteRes);
@@ -219,6 +219,13 @@ export default class ProductControl {
 
   async updateProduct(req: Request, res: Response) {
     const id = req.params.id;
+    if (req.user.role == "user") {
+      res.status(403).send({
+        status: "Error",
+        message: "You are not authorized to access this resource!",
+      });
+      return;
+    }
 
     if (req.user.role !== "admin") {
       return res.status(403).send({
@@ -279,7 +286,8 @@ export default class ProductControl {
     const updateRes = await this.productService.handleUpdateProduct(
       body,
       id,
-      filenames
+      filenames,
+      req.user
     );
 
     if (updateRes.status === "error") {

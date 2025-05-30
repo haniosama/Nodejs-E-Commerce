@@ -33,5 +33,28 @@ export default class CategoriesControl {
       res.status(201).send(resSer);
     }
   }
+  async getetCatogriesForAdmin(req: Request, res: Response) {
+    const token = req.headers["authorization"]?.split(" ")[1] as string;
+    let resSer = await this.categoriesService.handleGetgatogriesForAdmin(token);
+    console.log(resSer);
+    
+    if (resSer.status == "fail") {
+      res.status(404).send(resSer);
+    } else {
+      res.status(201).send(resSer);
+    }
+  }
+  async deleteCategory(req: Request, res: Response) {
+    const token = req.headers["authorization"]?.split(" ")[1] as string;
+    const categoryName=req.params.categoryName;
+    let resSer = await this.categoriesService.handleDeleteCategory(categoryName,token);
+    console.log(resSer);
+    
+    if (resSer.status == "fail") {
+      res.status(404).send(resSer);
+    } else {
+      res.status(201).send(resSer);
+    }
+  }
 
 }

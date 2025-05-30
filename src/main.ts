@@ -20,6 +20,7 @@ import paymentOnline from "./routes/paymentOnline";
 import stripe from "./service/stripe";
 import CartModel from "./model/cart";
 import OrderService from "./service/order";
+import couponRouter from "./routes/coupon";
 
 const app = express();
 
@@ -121,6 +122,7 @@ app.use("/api", dashboardRouter);
 app.use("/api", cartRouter);
 app.use("/api", CustomerRouter);
 app.use("/api", wishlistRouter);
+app.use("/api", couponRouter);
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);

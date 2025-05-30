@@ -114,7 +114,6 @@ export default class OrderService {
       token,
       process.env.TOKEN_SECRET as string
     ) as { role: string; userID: string };
-    if (decodedToken.role == "user") {
       try {
         const order = await OrderModel.findOneAndDelete({ _id: orderId });
         if (!order) {
@@ -134,9 +133,14 @@ export default class OrderService {
             }
           );
         }
-        const remainingOrders = await OrderModel.find({
-          userId: decodedToken.userID,
-        });
+        let remainingOrders ; 
+        if(decodedToken.role == "user"){
+          remainingOrders=await OrderModel.find({
+              userId: decodedToken.userID,
+          });
+        }else{
+          remainingOrders=await OrderModel.find({});
+        }
         return {
           status: "success",
           message: "order deleted",
@@ -148,12 +152,6 @@ export default class OrderService {
           errors,
         };
       }
-    } else {
-      return {
-        status: "Error",
-        message: "You are not authorized to access this resource!",
-      };
-    }
   }
   async handleDeletetAllOrder(userId: string, token: string) {
     let decodedToken = jwt.verify(

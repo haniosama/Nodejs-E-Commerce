@@ -66,10 +66,12 @@ export default class ProductService {
       });
 
       await newProduct.save();
+      const products=await ProductModel.find({adminId:decodedToken.userID});
+      console.log("ddddddddddddddd",products)
       return {
         status: "success",
         message: "product Added",
-        data: newProduct,
+        products,
       };
     } catch (err) {
       return {
@@ -78,12 +80,14 @@ export default class ProductService {
       };
     }
   }
-  async handleDeleteProduct(id: string) {
+  async handleDeleteProduct(id: string,userID:string) {
     try {
       await ProductModel.deleteOne({ _id: id });
+      const products=await ProductModel.find({adminId:userID});
       return {
         status: "succes",
         message: "prodect Deleted Successfully",
+        products
       };
     } catch (errors) {
       return {
@@ -123,7 +127,7 @@ export default class ProductService {
   //   }
   // }
 
-  async handleUpdateProduct(body: any, id: string, filenames: string[]) {
+  async handleUpdateProduct(body: any, id: string, filenames: string[],userID:string) {
     try {
       console.log("filenames", filenames);
       body.images = filenames;
@@ -141,11 +145,12 @@ export default class ProductService {
           runValidators: true,
         }
       );
+      const products=await ProductModel.find({adminId:userID});
 
       if (product) {
         return {
           status: "success",
-          product,
+          products,
         };
       } else {
         return {

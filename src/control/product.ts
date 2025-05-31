@@ -282,12 +282,12 @@ export default class ProductControl {
     }
 
     const body = req.body;
-
+      console.log(body,"fffffffffffff")
     const updateRes = await this.productService.handleUpdateProduct(
       body,
       id,
       filenames,
-      req.user
+      req.user.userID
     );
 
     if (updateRes.status === "error") {

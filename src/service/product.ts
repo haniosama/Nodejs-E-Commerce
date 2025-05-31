@@ -67,7 +67,6 @@ export default class ProductService {
 
       await newProduct.save();
       const products=await ProductModel.find({adminId:decodedToken.userID});
-      console.log("ddddddddddddddd",products)
       return {
         status: "success",
         message: "product Added",
@@ -129,7 +128,6 @@ export default class ProductService {
 
   async handleUpdateProduct(body: any, id: string, filenames: string[],userID:string) {
     try {
-      console.log("filenames", filenames);
       body.images = filenames;
       body.imageCover = filenames[0];
       let product = await ProductModel.findByIdAndUpdate(
@@ -146,6 +144,7 @@ export default class ProductService {
         }
       );
       const products=await ProductModel.find({adminId:userID});
+      console.log("lllllllllllll",product)
 
       if (product) {
         return {

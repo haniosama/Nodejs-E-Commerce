@@ -9,6 +9,38 @@ import CartModel from "../model/cart";
 export default class OrderService {
   constructor() {}
 
+  async handleGetAllOders(token:string){
+    try{
+      let decodedToken = jwt.verify(
+        token,
+        process.env.TOKEN_SECRET as string
+      ) as { role: string; userID: string };
+      if(decodedToken.role == "manager"){
+        const orders=await OrderModel.find({});
+        if(orders.length>0){
+          return {
+            status: "success",
+            orders,
+          };
+        }else{
+          return {
+            status: "fail",
+            message: "You Do not Have Any products",
+          };
+        }
+      }else{
+        return {
+          status: "error",
+          message: "You are not authorized to access this resource!",
+        };
+      }
+    }catch(error){
+      return {
+        status: "Error",
+        error
+      };
+    }
+  }
   async handleCreateOrder(
     body: IOrder,
     token: string,

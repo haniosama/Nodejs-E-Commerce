@@ -7,6 +7,18 @@ const stripe = require("stripe")(
 export default class OrderControler {
   constructor(private orderService: OrderService) {}
 
+  async getAllOders(req: Request, res: Response) {
+    
+    const token = req.headers["authorization"]?.split(" ")[1] as string;
+    const resSer = await this.orderService.handleGetAllOders( token );
+    if (resSer.status == "success") {
+      res.status(200).send(resSer);
+    }else if(resSer?.status == "fail"){
+      res.status(400).send(resSer);
+    }else {
+      res.status(500).send(resSer);
+    }
+  }
   async createOrder(req: Request, res: Response) {
     const body = req.body;
     // console.log("Create Order BODY" , body);

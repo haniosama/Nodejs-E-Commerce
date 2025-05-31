@@ -5,12 +5,38 @@ export default class CouponService{
   constructor(){}
 
 
-  async hangdleGetCoupons(token:string,){
+  async hangdleGetCouponsForAdmin(token:string,){
     try{
       const decodeToken=jwt.verify(token,process.env.TOKEN_SECRET as string) as { role: string; userID: string };
       console.log(decodeToken)
       if(decodeToken.role !== "user"){
         const coupons=await CouponModel.find({adminId:decodeToken.userID});
+        return{
+          status:"success",
+          coupons
+        }
+      }
+      else{
+        return{
+          status:"fail",
+          message:"Unauthorized: Only admins can get coupons"
+        }
+      }
+    }
+    catch(errors){
+      return{
+        status:"error",
+        errors
+      }
+    }
+  };
+
+  async hangdleGetCouponsForManager(token:string,){
+    try{
+      const decodeToken=jwt.verify(token,process.env.TOKEN_SECRET as string) as { role: string; userID: string };
+      console.log(decodeToken)
+      if(decodeToken.role == "manager"){
+        const coupons=await CouponModel.find({});
         return{
           status:"success",
           coupons
@@ -41,10 +67,16 @@ export default class CouponService{
       console.log(decodeToken)
       if(decodeToken.role !== "user"){
         await CouponModel.deleteOne({adminId:decodeToken.userID,_id:couponId});
-        const couponsFun=await this.hangdleGetCoupons(token);
+        let couponsFun;
+        if(decodeToken.role == "admin"){
+          couponsFun=await this.hangdleGetCouponsForManager(token);
+        }
+        if(decodeToken.role == "manager"){
+          couponsFun=await this.hangdleGetCouponsForManager(token);
+        }
         return{
           status:"success",
-          coupons:couponsFun.coupons
+          coupons:couponsFun?.coupons
         }
       }else{
         return{

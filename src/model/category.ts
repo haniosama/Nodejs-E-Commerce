@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { ICategory } from "../interface/category";
 
 let schema = new mongoose.Schema({
+
   name: {
     type: String,
     required: true,

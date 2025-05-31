@@ -58,7 +58,7 @@ export default class CategoriesService {
     try {
       const categoriesNames=await ProductModel.find<{name:string}[]>({adminId:decodedToken.userID}).distinct("category.name");
       console.log(categoriesNames)
-      const categories = await CategoryModel.find({name:{$in:categoriesNames}})
+      const categories = await CategoryModel.find({name:{$in:categoriesNames}}).select("name image _id")
       console.log(categories,"kkkkkkkkkkkkk")
       return {
         status: "success",

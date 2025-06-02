@@ -84,9 +84,10 @@ export default class CategoriesService {
     }
     try {
       await ProductModel.deleteMany({adminId:decodedToken.userID,'category.name':categoryName});
+      const categoryForAdmin=await this.handleGetgatogriesForAdmin(token)
       return {
         status: "success",
-        data: "Category Deleted",
+        data:categoryForAdmin,
       };
     } catch (err) {
       return {

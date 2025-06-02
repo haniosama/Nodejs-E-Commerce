@@ -24,12 +24,15 @@ export default class CouponConterol{
         }
   }
   async createDiscount(req: Request, res: Response){
-    const resSer=await this.couponService.hangdleDiscount();
-    // if(resSer.status == "success"){
-    //         res.status(200).send(resSer)
-    //     }else{
-    //         res.status(500).send(resSer)
-    //     }
+    const body=req.body;
+    const token=req.headers["authorization"]?.split(" ")[1] as string;
+    const resSer=await this.couponService.hangdleDiscount(token,body);
+    console.log("JJjjjjj",resSer)
+    if(resSer.status == "success"){
+            res.status(200).send(resSer)
+        }else{
+            res.status(500).send(resSer)
+        }
   }
   async deleteCoupon(req: Request, res: Response){
     const token=req.headers["authorization"]?.split(" ")[1] as string;

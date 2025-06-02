@@ -1,5 +1,6 @@
 import  jwt  from 'jsonwebtoken';
 import CouponModel from "../model/coupon";
+import { error } from 'console';
 
 export default class CouponService{
   constructor(){}
@@ -57,7 +58,37 @@ export default class CouponService{
     }
   };
 
-  hangdleDiscount(){
+  async hangdleDiscount(token:string,body:{code:string,discount:number}){
+    try{
+      const decodeToken=jwt.verify(token,process.env.TOKEN_SECRET as string) as { role: string; userID: string };
+      if(decodeToken.role =='admin'){
+        const couponFounded=await CouponModel.findOne({code:body.code});
+        if(couponFounded){
+          return{
+              status:"fail",
+              coupons:"This Coupon Aready Founded"
+            }
+        }else{
+          const newCoupon=new CouponModel({...body,adminId:decodeToken.userID});
+          await newCoupon.save()
+          const coupons=await CouponModel.find({})
+          return{
+              status:"success",
+              coupons
+            }
+          }
+        }else{
+          return{
+              status:"error",
+              message:"Unauthorized: Only admins can get coupons"
+            }
+      }
+    }catch(error){
+      return{
+          status:"error",
+          error
+        }
+    }
     
   };
 
@@ -69,11 +100,12 @@ export default class CouponService{
         await CouponModel.deleteOne({adminId:decodeToken.userID,_id:couponId});
         let couponsFun;
         if(decodeToken.role == "admin"){
-          couponsFun=await this.hangdleGetCouponsForManager(token);
+          couponsFun=await this.hangdleGetCouponsForAdmin(token);
         }
         if(decodeToken.role == "manager"){
           couponsFun=await this.hangdleGetCouponsForManager(token);
         }
+        console.log("aaaaaaaaaaaaaaaa",couponsFun)
         return{
           status:"success",
           coupons:couponsFun?.coupons

@@ -34,8 +34,9 @@ const getAdminProducts = async (req: Request, res: Response) => {
 
 const getUserData = async (req: Request, res: Response) => {
   let userInfo = await UserModel.find({ _id: req.params.id });
-
-  if (!userInfo) {
+  console.log(req.params.id )
+  console.log(userInfo)
+  if (userInfo.length<=0) {
     res.status(404).json({
       status: "fail",
       message: "User Not found",

@@ -21,4 +21,5 @@ export interface IOrder {
   }[];
   adminsId: string[]; // ✅ أضف هذا السطر
   total: number;
+  orderStatus:"Delivered" | "Pending"  |"Shipped"
 }

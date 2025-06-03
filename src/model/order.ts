@@ -37,6 +37,10 @@ const schema = new mongoose.Schema({
   onlinePaymentDetails: {
     type: {},
   },
+  orderStatus:{
+    type:String,
+    default:"Pending"
+  }
 });
 
 const OrderModel = mongoose.model<IOrder>("order", schema);

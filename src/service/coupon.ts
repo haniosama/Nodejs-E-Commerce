@@ -112,17 +112,19 @@ export default class CouponService{
         }
       }else{
         return{
-          status:"success",
+          status:"fail",
           message:"Unauthorized: Only admins can delete"
         }
       }
     }
     catch(errors){
       return{
-        status:"fail",
+        status:"error",
         errors
       }
     }
   };
+   
+
 
 }

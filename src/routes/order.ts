@@ -4,7 +4,6 @@ import OrderControler from "../control/order";
 import verifyToken from "../middleware/verifyToken";
 
 const router = Router();
-
 const orderService = new OrderService();
 const orderControler = new OrderControler(orderService);
 
@@ -24,6 +23,9 @@ router.delete("/orders/delete/:userId", (req, res) =>
 );
 router.delete("/order/delete/:orderId", (req, res) =>
   orderControler.deleteSpecificOrder(req, res)
+);
+router.post("/order/status/:orderId", (req, res) =>
+  orderControler.changeStatusOfOrder(req, res)
 );
 // router.post("/order/checkout", verifyToken, (req, res) =>
 //   orderControler.checkout(req, res)

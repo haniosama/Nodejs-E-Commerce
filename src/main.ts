@@ -24,6 +24,14 @@ import couponRouter from "./routes/coupon";
 
 const app = express();
 
+
+
+app.use(express.json());
+app.use(cors());
+app.use(helmet());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 app.post(
   "/confirmOnlinePayment",
   express.raw({ type: "application/json" }),
@@ -93,11 +101,6 @@ app.post(
   }
 );
 
-app.use(cors());
-app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

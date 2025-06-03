@@ -17,6 +17,7 @@ export default class OrderService {
       ) as { role: string; userID: string };
       if(decodedToken.role == "manager"){
         const orders=await OrderModel.find({});
+        console.log("ooooooooooo",orders)
         if(orders.length>0){
           return {
             status: "success",
@@ -84,12 +85,14 @@ export default class OrderService {
           order_details: body.order_details,
           userId: decodedToken.userID,
           products,
+          
         };
         const newOrder = new OrderModel({
           ...body2,
           adminsId,
           total,
           onlinePaymentDetails,
+          orderStatus:"Pending"
         });
         await newOrder.save();
         const cart = await CartModel.findOne({ userId: decodedToken.userID });
@@ -231,9 +234,9 @@ export default class OrderService {
       token,
       process.env.TOKEN_SECRET as string
     ) as { role: string; userID: string };
-    if (decodedToken.role == "admin") {
+    if (decodedToken.role !== "user") {
       try {
-        const order = await OrderModel.findOneAndDelete({ _id: orderId });
+        const order = await OrderModel.findOne({ _id: orderId });
         const allOrder = await OrderModel.find({});
 
         if (order?.id) {
@@ -302,4 +305,39 @@ export default class OrderService {
       };
     }
   }
+  async hangdleChangeStatusOfOrder(token:string,orderId:string,body:"Delivered" | "Pending"  |"Shipped"){
+    try{
+      const decodeToken=jwt.verify(token,process.env.TOKEN_SECRET as string) as { role: string; userID: string };
+      if(decodeToken.role == "manager"){
+        if(body == "Delivered" ){
+          await OrderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:body}},{ new: true });
+          const orders=await this.handleComplateOrder(orderId,token);
+          console.log(orders,"ppppppppppppppppoooooooooooo")
+          return{
+            status:"success",
+            orders:orders.orders
+          }
+        }
+        else{
+          await OrderModel.findOneAndUpdate({_id:orderId},{$set:{orderStatus:body}},{ new: true });
+          const orders=await this.handleGetAllOders(token);
+          return{
+            status:"success",
+            orders:orders.orders
+          }
+        }
+      }else{
+        return{
+          status:"fail",
+          message:"Unauthorized: Only manager can hange at Order"
+        }
+      }
+    }
+    catch(errors){
+      return{
+        status:"fail",
+        errors
+      }
+    }
+  };
 }

@@ -99,6 +99,19 @@ export default class OrderControler {
     }
   }
 
+    async changeStatusOfOrder(req: Request, res: Response){
+    const token=req.headers["authorization"]?.split(" ")[1] as string;
+    const couponId=req.params.orderId;
+    const body=req.body?.orderStatus 
+          console.log(body,"body")
+
+    const resSer=await this.orderService.hangdleChangeStatusOfOrder(token,couponId,body);
+    if(resSer.status == "success"){
+        res.status(200).send(resSer)
+    }else{
+        res.status(500).send(resSer)
+    }
+  }
 //   async checkout(req: Request, res: Response) {
 //     const body = req.body;
 

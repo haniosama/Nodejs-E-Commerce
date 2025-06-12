@@ -5,6 +5,7 @@ import OrderModel from "../model/order";
 import ProductModel from "../model/product";
 import UserModel from "../model/user";
 import CartModel from "../model/cart";
+import mongoose from "mongoose";
 
 export default class OrderService {
   constructor() {}
@@ -144,50 +145,64 @@ export default class OrderService {
       };
     }
   }
+
   async handledeleteSpecificOrder(orderId: string, token: string) {
-    let decodedToken = jwt.verify(
-      token,
-      process.env.TOKEN_SECRET as string
-    ) as { role: string; userID: string };
-      try {
-        const order = await OrderModel.findOneAndDelete({ _id: orderId });
-        if (!order) {
-          return {
-            status: "fail",
-            message: "order not found",
-          };
-        }
-        for (let i = 0; i < order.products.length; i++) {
-          await ProductModel.updateOne(
-            { _id: order.products[i]._id },
-            {
-              $inc: {
-                sold: -order.products[i].quantity,
-                quantity: order.products[i].quantity,
-              },
-            }
-          );
-        }
-        let remainingOrders ; 
-        if(decodedToken.role == "user"){
-          remainingOrders=await OrderModel.find({
-              userId: decodedToken.userID,
-          });
-        }else{
-          remainingOrders=await OrderModel.find({});
-        }
+    try {
+      const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET as string) as {
+        role: string;
+        userID: string;
+      };
+
+      console.log("Order count before delete:", (await this.handleGetOrderForAdmin(decodedToken.userID, token)).orders?.length);
+
+      // تحويل orderId لـ ObjectId
+      const objectId = new mongoose.Types.ObjectId(orderId);
+      const order = await OrderModel.findOneAndDelete({ _id: objectId });
+
+      if (!order) {
+        console.log("Order not found for deletion");
         return {
-          status: "success",
-          message: "order deleted",
-          remainingOrders,
-        };
-      } catch (errors) {
-        return {
-          status: "error",
-          errors,
+          status: "fail",
+          message: "order not found",
         };
       }
+
+      console.log("Deleted order ID:", order._id);
+
+      for (let i = 0; i < order.products.length; i++) {
+        await ProductModel.updateOne(
+          { _id: order.products[i].productId },
+          {
+            $inc: {
+              sold: -order.products[i].quantity,
+              quantity: order.products[i].quantity,
+            },
+          }
+        );
+      }
+
+      let remainingOrders;
+      if (decodedToken.role === "user") {
+        remainingOrders = await OrderModel.find({ userId: decodedToken.userID });
+      } else {
+        remainingOrders = await OrderModel.find({});
+      }
+
+      console.log("Order count after delete:", remainingOrders.length);
+
+      return {
+        status: "success",
+        message: "order deleted",
+        remainingOrders,
+      };
+    } catch (errors) {
+      return {
+        status: "error",
+        errors,
+      };
+    }
   }
+
   async handleDeletetAllOrder(userId: string, token: string) {
     let decodedToken = jwt.verify(
       token,

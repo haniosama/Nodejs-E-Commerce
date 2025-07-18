@@ -2,9 +2,13 @@
   "name": "back-end",
   "version": "1.0.0",
   "scripts": {
-    "start": "nodemon src/main.ts"
+    "build": "tsc -p",
+    "start": "node dist/main.js"
   },
   "author": "",
+   "engines": {
+    "node": "22.14.0"
+  },
   "license": "ISC",
   "description": "",
   "dependencies": {
